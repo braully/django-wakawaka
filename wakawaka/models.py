@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext
@@ -12,13 +14,13 @@ class WikiPage(models.Model):
     class Meta:
         verbose_name = _("Wiki page")
         verbose_name_plural = _("Wiki pages")
-        ordering = ["slug"]
+        ordering = ("slug",)
 
     def __str__(self) -> str:
         return self.slug
 
     @property
-    def current(self):
+    def current(self) -> WikiPage:
         return self.revisions.latest()
 
 
@@ -37,14 +39,14 @@ class Revision(models.Model):
         related_name="wakawaka_revisions",
         on_delete=models.CASCADE,
     )
-    creator_ip = models.GenericIPAddressField(_("creator ip"))
+    creator_ip = models.GenericIPAddressField(_("creator ip"), blank=True, null=True)
     created = models.DateTimeField(_("created"), auto_now_add=True)
     modified = models.DateTimeField(_("modified"), auto_now=True)
 
     class Meta:
         verbose_name = _("Revision")
         verbose_name_plural = _("Revisions")
-        ordering = ["-modified"]
+        ordering = ("-modified",)
         get_latest_by = "modified"
 
     def __str__(self) -> str:
